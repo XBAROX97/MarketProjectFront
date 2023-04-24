@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom'
 
 const App = () => {
   return (
-    <div className='overflow-x-hidden '>
+    <div className='overflow-hidden'>
       <Header />
       <Outlet />
     </div>

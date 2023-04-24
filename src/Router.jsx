@@ -9,6 +9,8 @@ import AddClient from "./components/AddClient";
 import Home from "./components/Home";
 import Purchasehistory  from "./components/Purchasehistory"
 import AddBox  from "./components/AddBox";
+import Profit from"./components/Profit"
+import LeaderBoard from "./components/LeaderBoard";
 
 
  export const router = createBrowserRouter([
@@ -40,6 +42,15 @@ import AddBox  from "./components/AddBox";
       {
         path: "/purchasehistory",
         element: <Purchasehistory/>,
+        errorElement: <ErrorPages/>,
+      },  {
+        path: "/Profit",
+        element: <Profit/>,
+        errorElement: <ErrorPages/>,
+      },
+      {
+        path: "/leaderboard",
+        element: <LeaderBoard/>,
         errorElement: <ErrorPages/>,
       },
     ],

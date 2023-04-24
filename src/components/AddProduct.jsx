@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react'
-import AddPro from './Product/AddPro'
+import React, { useState, useEffect } from 'react'
 import ProductList from './Product/ProductList'
 import axios from 'axios'
 
@@ -18,8 +17,7 @@ const AddProduct = () => {
   }
 
   return (
-    <div className=' w-screen h-screen flex'>
-      <AddPro products={products} setProducts={setProducts} />
+    <div>
       <ProductList products={products} setProducts={setProducts} />
     </div>
   )

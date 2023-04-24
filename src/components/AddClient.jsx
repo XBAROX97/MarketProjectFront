@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react'
-import AddUse from './User.jsx/AddUse'
+import React, { useState, useEffect } from 'react'
 import UserList from './User.jsx/UserList'
 import axios from 'axios'
 
@@ -14,11 +13,11 @@ const AddClient = () => {
       setUsers(response.data);
     } catch (error) {
       console.error(error);
-    }}
+    }
+  }
   return (
-    <div className=' w-screen h-screen flex       '>
-    <AddUse users={users} setUsers={setUsers}/>
-    <UserList users={users} setUsers={setUsers}/>
+    <div className='flex'>
+      <UserList users={users} setUsers={setUsers} />
     </div>
   )
 }
