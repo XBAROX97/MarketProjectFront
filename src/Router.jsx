@@ -1,57 +1,57 @@
 import {
   createBrowserRouter,
 } from "react-router-dom";
-import ErrorPages from "./components/ErrorPages";
-import './index.css'
+import './index.css';
 import App from "./App";
-import AddProudct from "./components/AddProduct";
-import AddClient from "./components/AddClient";
 import Home from "./components/Home";
-import Purchasehistory  from "./components/Purchasehistory"
-import AddBox  from "./components/AddBox";
-import Profit from"./components/Profit"
+import Profit from "./components/Profit";
+import AddBox from "./components/AddBox";
+import Clients from "./components/Clients";
+import ErrorPages from "./components/ErrorPages";
+import Products from "./components/Products";
 import LeaderBoard from "./components/LeaderBoard";
+import Purchasehistory from "./components/Purchasehistory";
 
 
- export const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
-    element: <App/>,
+    element: <App />,
     errorElement: <ErrorPages />,
-    children:[
+    children: [
       {
         path: "",
-        element: <Home/>,
+        element: <Home />,
+        errorElement: <ErrorPages />,
+      },
+      {
+        path: "/clients",
+        element: <Clients />,
+        errorElement: <ErrorPages />,
+      },
+      {
+        path: "/products",
+        element: <Products />,
         errorElement: <ErrorPages />,
       },
       {
         path: "/addbox",
-        element: <AddBox/>,
-        errorElement: <ErrorPages/>,
-      },
-      {
-        path: "/addproduct",
-        element: <AddProudct/>,
-        errorElement: <ErrorPages />,
-      },
-      {
-        path: "/addclient",
-        element: <AddClient/>,
+        element: <AddBox />,
         errorElement: <ErrorPages />,
       },
       {
         path: "/purchasehistory",
-        element: <Purchasehistory/>,
-        errorElement: <ErrorPages/>,
-      },  {
+        element: <Purchasehistory />,
+        errorElement: <ErrorPages />,
+      }, {
         path: "/Profit",
-        element: <Profit/>,
-        errorElement: <ErrorPages/>,
+        element: <Profit />,
+        errorElement: <ErrorPages />,
       },
       {
         path: "/leaderboard",
-        element: <LeaderBoard/>,
-        errorElement: <ErrorPages/>,
+        element: <LeaderBoard />,
+        errorElement: <ErrorPages />,
       },
     ],
   },
