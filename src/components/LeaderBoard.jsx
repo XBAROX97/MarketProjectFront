@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaSearch } from 'react-icons/fa';
+import Pagination from './Pagination';
+
 const LeaderBoard = () => {
   const [leaderBoardData, setLeaderBoardData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(10);
 
   const loadLeaderBoardData = async () => {
     try {
@@ -21,10 +24,28 @@ const LeaderBoard = () => {
   const filteredLeaderBoardData = leaderBoardData.filter((leader) =>
     leader.userName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = filteredLeaderBoardData.slice(indexOfFirstPost, indexOfLastPost);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const previousPage = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const nextPage = () => {
+    if (currentPage !== Math.ceil(filteredLeaderBoardData.length / postsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
   return (
     <div className='container mx-auto'>
       <div className='my-4'>
-
         <h1 className="text-4xl font-bold text-center text-slate-100 font-mono uppercase">Leaderboard</h1>
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-3">
@@ -42,29 +63,31 @@ const LeaderBoard = () => {
               </span>
             </div>
           </div>
+          
         </div>
-        <div className="relative rounded flex justify-center" >
-          <table className="w-full rounded my-8 bg-gray-800 text-sm text-gray-400 border-collapse">
-            <thead className="text-xs uppercase">
-              <tr className="border-b border-gray-300 dark:border-gray-700">
-                <th scope="col" className="px-6 py-3 text-left font-medium tracking-wider">
+        <div className="relative rounded-lg overflow-x-auto shadow-md sm:rounded-lg flex justify-center">
+          <table className="w-full divide-y divide-gray-200 dark:divide-gray-700 mt-3 overflow-y-hidden" >
+            <caption className="sr-only">Leaderboard</caption>
+            <thead className="bg-gray-100 dark:bg-gray-800">
+              <tr className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                <th scope="col" className="px-6 py-3 text-center font-medium tracking-wider">
                   Client Name
                 </th>
-                <th scope="col" className="px-6 py-3 text-left font-medium tracking-wider">
+                <th scope="col" className="px-6 py-3 text-center font-medium tracking-wider">
                   Score
                 </th>
-                <th scope="col" className="px-6 py-3 text-left font-medium tracking-wider">
+                <th scope="col" className="px-6 py-3 text-center font-medium tracking-wider">
                   Date
                 </th>
               </tr>
             </thead>
-            <tbody className='rounded'>
-              {filteredLeaderBoardData.map((leader, i) => (
-                <tr key={i} className="border-b border-gray-700 hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap">
+            <tbody className="bg-white divide-y text-center divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
+              {currentPosts.map((leader, i) => (
+                <tr key={i} className="hover:bg-gray-800">
+                  <td className="px-6 py-4 whitespace-nowrap ">
                     <div className="flex items-center">
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-200">
+                      <div className="ml-4 ">
+                        <div className="text-sm  font-medium text-gray-900 dark:text-gray-200">
                           {leader.userName}
                         </div>
                       </div>
@@ -84,7 +107,17 @@ const LeaderBoard = () => {
           </table>
         </div>
       </div>
+      <div className=' flex justify-center items-center'>
+      <Pagination
+        postsPerPage={postsPerPage}
+        totalPosts={filteredLeaderBoardData.length}
+        paginate={handlePageChange}
+        previousPage={previousPage}
+        nextPage={nextPage}
+      />
     </div>
+    </div>
+    
   );
 };
 

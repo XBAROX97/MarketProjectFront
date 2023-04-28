@@ -2,10 +2,17 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AiOutlineClose } from "react-icons/ai";
+import { BsFillTrash3Fill, BsPencilFill } from 'react-icons/bs'
+import { FaSearch } from "react-icons/fa";
+import Pagination from "../Pagination";
 
-const Boxlist = ({ boxs, setBoxs }) => {
+
+
+const Boxlist = () => {
+  const [boxs, setBoxs] = useState([]);
+  const [products, setProducts] = useState([]);
   const [modal, setModal] = useState(false)
-
   const [modalData, setModalData] = useState({})
   const [selectedBox, setSelectedBox] = useState({});
   const [name, setName] = useState('');
@@ -14,19 +21,45 @@ const Boxlist = ({ boxs, setBoxs }) => {
   const [quantity, setQuantity] = useState('');
   const [modalDelete, setModalDelete] = useState(false);
   const [dataDelete, setDataDelete] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(10);
+
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [quantityBox, setQuantityBox] = useState(0);
+  const [quantityPiece, setQuantityPiece] = useState(0);
+  const [boxprice, setBoxprice] = useState("");
+  const [submitStatus, setSubmitStatus] = useState(false);
+  const [nav, setNav] = useState(false);
 
   const loadBox = async () => {
     await axios.get('http://localhost:4040/api/boxes')
       .then(response => {
         console.log(response);
         setBoxs(response.data);
-        setLoading(false);
       })
       .catch(error => {
         console.error(error);
       });
   }
-
+  const handleCloseNav = () => {
+    setNav(false);
+    setSelectedProduct(null);
+    setQuantityBox(0);
+    setQuantityPiece(0);
+    setBoxprice('');
+    setSubmitStatus(false);
+  };
+  const loadProduct = async () => {
+    try {
+      const response = await axios.get('http://localhost:4040/api/products');
+      const productData = response.data;
+      console.log(response.data);
+      setProducts(productData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const handleClosemodalDelete = () => {
     setModalDelete(false)
   };
@@ -41,31 +74,25 @@ const Boxlist = ({ boxs, setBoxs }) => {
         `http://localhost:4040/api/boxes/${id}`
       );
       console.log(response);
-      alert('Data deleted');
+      toast.success('box deleted successfully!');
       setBoxs(boxs.filter(box => box._id !== id));
 
       loadBox();
     } catch (error) {
       console.error('Error deleting data:', error);
     }
-
-
   };
-
   const handleDecreaseBox = () => {
     if (quantity > 0) {
       setQuantity(quantity - 1);
     }
   };
-
   const handleIncreaseBox = () => {
     setQuantity(quantity + 1);
   };
   const handleClose = () => {
     setModal(false);
-
   };
-
   const handleUpdate = (box) => {
     setName(box.name)
     setPrice(box.price)
@@ -75,8 +102,6 @@ const Boxlist = ({ boxs, setBoxs }) => {
     setModalData(box);
     setModal(true);
   };
-
-
   const handleSave = async () => {
     try {
       console.log(modalData._id, name, productQuantity, quantity, price);
@@ -89,67 +114,219 @@ const Boxlist = ({ boxs, setBoxs }) => {
           price,
           productId: modalData._id,
         }
-      ).finally(() => { alert('Data saved.'); loadBox(); }).catch((err) => console.log(err));
+      ).finally(() => { 
+        toast.success('box has been updated successfully!');
+        loadBox(); }).catch((err) => console.log(err));
       setModal(false);
       setModalData({});
     } catch (error) {
       console.error('Error saving data:', error);
     }
   };
+  useEffect(() => {
+    loadBox();
+    loadProduct();
+    if (submitStatus) {
+      setSelectedProduct(null);
+      setQuantityBox(0);
+      setQuantityPiece(0);
+      setBoxprice('');
+      setSubmitStatus(false);
+
+    }
+  }, [submitStatus]);
+
+  const handleDecreasePiece = () => {
+    if (quantityPiece > 0) {
+      setQuantityPiece(quantityPiece - 1);
+    }
+  };
+  const handleIncreasePiece = () => {
+    setQuantityPiece(quantityPiece + 1);
+  };
+  const handleDecreaseBox2 = () => {
+    if (quantityBox > 0) {
+      setQuantityBox(quantityBox - 1);
+    }
+  };
+  const handleIncreaseBox2 = () => {
+    setQuantityBox(quantityBox + 1);
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const productId = selectedProduct._id;
+    const data = {
+      name: selectedProduct.name,
+      productId,
+      quantity: quantityBox,
+      productQuantity: quantityPiece,
+      price: parseInt(boxprice)
+    }
+    console.log(data);
+    axios.post('http://localhost:4040/api/boxes', data)
+      .then((response) => {
+        toast.success('box has been added successfully!');
+        console.log(response);
+        setSubmitStatus(true);
+        setBoxs([...boxs, response.data]);
+        setNav(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const filtredBox = boxs.filter((box) =>
+    box.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = filtredBox.slice(indexOfFirstPost, indexOfLastPost);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const previousPage = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const nextPage = () => {
+    if (currentPage !== Math.ceil(filteredLeaderBoardData.length / postsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   return (
     <>
-      <div className="flex-[2] h-screen bg-gray-500 overflow-y-scroll border">
-        <h1 className="text-2xl font-bold mb-4 text-white text-center font-mono pt-2">Boxes List</h1>
-        <div className="overflow-x-auto">
-          <table className="w-full divide-y divide-gray-200">
-            <thead className="bg-gray-700 sticky top-0">
-              <tr className='text-white'>
-                <th className="px-4 py-2">Name</th>
-                <th className="px-4 py-2 text-yellow-300">Box Quantity</th>
-                <th className="px-4 py-2 text-green-400">Piece Quantity</th>
-                <th className="px-4 py-2">Box Price</th>
-                <th className="text-center px-4 py-2 border-r">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {boxs.map((box, i) => (
-                <tr className='hover:bg-gray-700 focus-within:bg-gray-700 text-md ' key={i}>
-                  <td className="px-4 py-2 whitespace-nowrap">{box.name}</td>
-                  <td className="px-4 py-2 whitespace-nowrap text-center text-yellow-300">{box.quantity}</td>
-                  <td className="px-4 py-2 whitespace-nowrap text-center text-green-300">{box.productQuantity}</td>
-                  <td className="px-4 py-2 whitespace-nowrap text-center">{box.price}  $</td>
-                  <td className="px-6 py-4 whitespace-no-wrap  border-gray-200 text-sm leading-5 font-medium border-r text-center">
-                    <div className=' flex gap-2  justify-center'>
-
-                      <button
-                        onClick={() => handleUpdate(box)}
-                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-2 shadow rounded"
-                      >
-                        EditBox
-                      </button>
-                      <button onClick={() => {
-                        setModalDelete(true);
-                        setDataDelete(box._id)
-                      }} className="bg-red-600 hover:bg-green-700 text-white font-bold py-2 px-4  shadow rounded">
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+      <div className='container mx-auto'>
+        <div className="w-full my-4">
+          <h1 className="text-4xl font-bold text-center text-slate-100 font-mono uppercase">Boxes</h1>
+          <div className="my-4 grid grid-cols-12 gap-4">
+          <div className="col-span-6 lg:col-span-3">
+            <div className="relative flex items-center">
+              <input
+                type="text"
+                placeholder="Search by product name"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+              />
+              <span className="absolute right-3">
+                <FaSearch className="h-5 w-5 text-gray-400" />
+              </span>
+            </div>
+          </div>
+          <div className="col-span-6 lg:col-span-9 flex justify-end">
+            <button onClick={setNav} className="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ">Add Box</button>
+          </div>
+        </div>
+          <div className="relative rounded-lg overflow-x-auto shadow-md sm:rounded-lg flex justify-center">
+            <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-100 dark:bg-gray-800">
+                <tr className='text-white'>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Name</th>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Box Quantity</th>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Piece Quantity</th>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Box Price</th>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y text-center divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
+                {searchTerm ? currentPosts.map((box, i) => (
+                  <tr className='hover:bg-gray-800 ' key={i}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      {box.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      {box.quantity}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      {box.productQuantity}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      {box.price}  $</td>
+                    <td className="px-6 py-4 whitespace-no-wrap  border-gray-200 text-sm leading-5 font-medium border-r text-center">
+                      <div className=' flex gap-2  justify-center'>
+                        <button
+                          onClick={() => handleUpdate(box)}
+                          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 shadow rounded"
+                        >
+                          <BsPencilFill />
+
+                        </button>
+                        <button onClick={() => {
+                          setModalDelete(true);
+                          setDataDelete(box._id)
+                        }} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4  shadow rounded">
+                          <BsFillTrash3Fill />
+
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )) :
+                  boxs.map((box, i) => (
+                    <tr className='hover:bg-gray-800 ' key={i}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {box.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {box.quantity}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {box.productQuantity}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {box.price}  $</td>
+                      <td className="px-6 py-4 whitespace-no-wrap  border-gray-200 text-sm leading-5 font-medium border-r text-center">
+                        <div className=' flex gap-2  justify-center'>
+                          <button
+                            onClick={() => handleUpdate(box)}
+                            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 shadow rounded"
+                          >
+                            <BsPencilFill />
+                          </button>
+                          <button onClick={() => {
+                            setModalDelete(true);
+                            setDataDelete(box._id)
+                          }} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4  shadow rounded">
+                            <BsFillTrash3Fill />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+          <div className=' flex justify-center items-center'>
+            <Pagination
+              postsPerPage={postsPerPage}
+              totalPosts={filtredBox.length}
+              paginate={handlePageChange}
+              previousPage={previousPage}
+              nextPage={nextPage}
+            />
+          </div>
         </div>
       </div>
       {modal && (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen pt-28 px-4 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity">
-              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+        <div className="bg-black/90 r-300 fixed w-full h-screen  top-0 right-0">
+          <div className={"fixed bg-gray-400 h-screen py-5 w-[40rem] duration-300 " + (modal ? 'right-0 top-0' : '-right-[100%] bottom-0')}>
+            <div className='flex justify-between px-4 py-2'>
+              <h2 className='text-2xl text-center font-bold pb-12 container capitalize'>Update Box</h2>
+              <AiOutlineClose onClick={handleClose} size={50} className='cursor-pointer text-red-500 hover:bg-red-400 rounded-full p-1' />
             </div>
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+
+            <div className="mx-5 grid grid-cols-1 gap-6">
+              <div className="bg-gray-500 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <h4 className="text-2xl capitalize font-extrabold tracking-tight text-gray-900 mb-4">
                   <input
                     type="text"
@@ -171,7 +348,7 @@ const Boxlist = ({ boxs, setBoxs }) => {
                       </button>
                       <input
                         disabled
-                        className="border border-gray-400 p-2 rounded-md w-10 text-center "
+                        className="border bg-white  border-gray-400 p-2 rounded-md w-10 text-center "
                         name="quantityBox"
                         type="number"
                         onChange={Number}
@@ -206,26 +383,86 @@ const Boxlist = ({ boxs, setBoxs }) => {
                   />
                 </div>
               </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <div className=" px-4 flex justify-center py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => handleSave(selectedBox._id)}
                 >
-                  Update
+                  Update Box
                 </button>
-                <button
-                  type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={() => handleClose(modalData)}
-                >
-                  Close
-                </button>
+
               </div>
             </div>
           </div>
         </div>
       )}
+      {nav ? <div className='bg-black/80 fixed w-full h-screen z-10 top-0 left-0' /> : ''}
+
+      <div className={"fixed bg-gray-600 z-10 h-screen py-5 w-[40rem] duration-300 " + (nav ? 'left-0 top-0' : '-left-[100%] bottom-0')}>
+        <div className={nav ? "block" : "hidden"}>
+          <div className='flex justify-between px-4 py-2'>
+            <h2 className='text-2xl text-center font-bold pb-12 text-white container capitalize'>Add Boxes</h2>
+            <AiOutlineClose onClick={handleCloseNav} size={30} className='cursor-pointer text-red-500 hover:bg-red-300 rounded-full p-1' />
+          </div>
+          <form onSubmit={handleSubmit} className="bg-gray-500  h-100% px-5 py-10">
+            <div className='flex flex-col gap-2'>
+              <label className='text-lg text-red-400 font-bold'>Select a product</label>
+              <select
+                className="text-black text-lg bg-gray-400 py-2 rounded-full"
+                value={selectedProduct ? selectedProduct.name : ""}
+                onChange={(e) => {
+                  const selectedProduct = products.find((product) => product.name === e.target.value);
+                  setSelectedProduct(selectedProduct);
+                }}
+              >
+                <option disabled value="">
+                  Choose a product
+                </option>
+                {products.map((product, index) => (
+                  <option key={index} value={product.name}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {selectedProduct ?
+              <div>
+                <div className=" flex justify-between py-4">
+                  <div >
+                    <label className="block text-yellow-300">Box Quantity:</label>
+                    <div className=' flex flex-row items-center'>
+                      <button type="button" className='border w-10 h-10 bg-yellow-500 rounded-lg font-bold text-2xl hover:text-yellow-200 mx-2 py-1 item-center text-center container ' onClick={handleDecreaseBox2}>-</button>
+                      <input className='border items-center align-middle text-center w-30 h-8   ' name='quantityBox' type='number' onChange={Number} value={quantityBox} />
+                      <button type="button" className='border w-10 h-10 bg-yellow-500 rounded-lg font-bold text-2xl hover:text-yellow-200 mx-2 py-1 item-center text-center container ' onClick={handleIncreaseBox2}>+</button>
+                    </div>
+                  </div>
+                  <div>
+
+                    <label className="block text-green-300">Piece Quantity:</label>
+                    <div className=' flex flex-row items-center'>
+                      <button type="button" className='border h-10 w-10 bg-green-500 rounded-lg font-bold text-2xl hover:text-green-200 mx-2 py-1 item-center text-center container' onClick={handleDecreasePiece}>-</button>
+                      <input className='border items-center align-middle text-center w-30 h-8' name='quantityPiece' type='number' onChange={Number} value={quantityPiece} />
+                      <button type="button" className='border w-10 h-10 bg-green-500 rounded-lg font-bold text-2xl hover:text-green-200 mx-2 py-1 item-center text-center container' onClick={handleIncreasePiece}>+</button>
+                    </div>
+                  </div>
+
+                </div>
+                <div className="mb-6">
+                  <label htmlFor="boxprice" className="block text-white font-bold mb-2">boxprice</label>
+                  <input type="number" id="boxprice" min={0} className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none 
+        focus:shadow-outline" value={boxprice} onChange={(event) => setBoxprice(event.target.value)} />
+                </div>
+
+                <div className="flex items-center justify-center">
+                  <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none 
+        focus:shadow-outline">Add Product</button>
+                </div>
+              </div>
+              : ""}
+          </form>
+        </div>
+      </div>
       {modalDelete && (
         <div class="fixed z-10 inset-0 overflow-y-auto ">
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center  sm:block sm:p-0">
@@ -265,6 +502,7 @@ const Boxlist = ({ boxs, setBoxs }) => {
         </div>
 
       )}
+
     </>
   );
 };

@@ -55,15 +55,7 @@ const Addbo = ({boxs, setBoxs,products, setProducts}) => {
       });
   };
 
-  useEffect(() => {
-    if (submitStatus) {
-      setSelectedProduct(null);
-      setQuantityBox(0);
-      setQuantityPiece(0);
-      setBoxprice('');
-      setSubmitStatus(false);
-    }
-  }, [submitStatus]);
+
   return (
     <form onSubmit={handleSubmit} className="bg-gray-700 flex-[1] h-100% px-5 py-10">
       <div className='flex flex-col gap-2'>

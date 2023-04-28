@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { AiOutlineClose } from "react-icons/ai";
+import { BsFillTrash3Fill, BsPencilFill } from 'react-icons/bs'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaSearch } from 'react-icons/fa';
+import Pagination from "../Pagination";
+
 
 const UserList = ({ }) => {
   const [loading, setLoading] = useState(false);
@@ -19,6 +22,8 @@ const UserList = ({ }) => {
   const [nav, setNav] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [dataDelete, setDataDelete] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(10);
 
 
   //  create ----------------------------------------------------------------------------------------------------------------------------------
@@ -96,12 +101,11 @@ const UserList = ({ }) => {
   const handleCloseNav = () => {
     setNav(false);
     setName2('');
-    setImage2('');
-    setPrice2('');
-    setRetailPrice2('');
-    setCategory2('');
-    setQuantityInPieces2('');
-    setSerialNumber2('');
+    setBudget2('');
+    setDebt2('');
+    setPosition2('');
+    setComments2('');
+
   };
   const handleClosemodalDelete = () => {
     setModalDelete(false)
@@ -140,61 +144,101 @@ const UserList = ({ }) => {
     }
   };
 
+  const filtredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = filtredUsers.slice(indexOfFirstPost, indexOfLastPost);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const previousPage = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const nextPage = () => {
+    if (currentPage !== Math.ceil(filteredLeaderBoardData.length / postsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
   return (
     <div className='container mx-auto'>
       <div className="w-full my-4">
         <h1 className="text-4xl font-bold text-center text-slate-100 font-mono uppercase">Clients</h1>
-        <div className="flex justify-between my-5">
-          <div className="relative flex items-center">
-            <input
-              type="text"
-              placeholder="Search by client name"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value)
-              }} className="w-full px-4 py-2 transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
-            />
-            <span className="absolute right-3">
-              <FaSearch className="h-5 w-5 text-gray-400" />
-            </span>
+        <div className="my-4 grid grid-cols-12 gap-4">
+          <div className="col-span-6 lg:col-span-3">
+            <div className="relative flex items-center">
+              <input
+                type="text"
+                placeholder="Search by product name"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 transition duration-500 ease-in-out border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+              />
+              <span className="absolute right-3">
+                <FaSearch className="h-5 w-5 text-gray-400" />
+              </span>
+            </div>
           </div>
-          <button onClick={() => setNav(!nav)} className="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded">
-            Add Client
-          </button>
-        </div>
+          <div className="col-span-6 lg:col-span-9 flex justify-end">
+            <button onClick={setNav} className="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 ">Add Client</button>
+          </div>
+        
+      </div>
         {loading ? (
           <p>Loading...</p>
         ) : (
-          <div className="relative flex justify-center overflow-x-auto shadow-md rounded">
-            <table className="w-full divide-y divide-gray-200 overflow-hidden">
-              <thead className="bg-gray-700 sticky top-0">
-                <tr className="text-white">
-                  <th className="px-4 py-2">Name</th>
-                  <th className="px-4 py-2">Budget</th>
-                  <th className="px-4 py-2">Debt</th>
-                  <th className="px-4 py-2">Comments</th>
-                  <th className="px-4 py-2">Position</th>
-                  <th className="text-center px-4 py-2">Action</th>
+          <div className="relative rounded-lg overflow-x-auto shadow-md sm:rounded-lg flex justify-center">
+            <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-100 dark:bg-gray-800">
+                <tr>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Name</th>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Budget</th>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Debt</th>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Comments</th>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Position</th>
+                  <th scope="col"
+                    className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
+                  >Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200" key="users">
+              <tbody className="bg-white divide-y text-center divide-gray-200 dark:bg-gray-900 dark:divide-gray-700" key="users">
                 {searchTerm
-                  ? users.filter((user) =>
-                    user.name.toLowerCase().includes(searchTerm.toLowerCase())
-                  ).map((user, i) => (
-                    <tr key={i} className="hover:bg-gray-700 focus-within:bg-gray-700 text-center text-md">
-                      <td className="px-4 py-2 whitespace-nowrap">{user.name}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{user.budget}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{user.debt}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{user.comments}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{user.position}</td>
+                  ? currentPosts.map((user, i) => (
+                    <tr key={i} className="hover:bg-gray-800 ">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {user.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {user.budget}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {user.debt}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {user.comments}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {user.position}</td>
                       <td className="px-6 py-4 whitespace-no-wrap border-border-gray-200 text-sm leading-5 font-medium">
                         <div className="flex justify-center gap-5">
                           <button
                             onClick={() => handleUpdate(user)}
                             className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 shadow rounded"
                           >
-                            Update
+                            <BsPencilFill />
+
                           </button>
                           <button
                             onClick={() => {
@@ -203,7 +247,7 @@ const UserList = ({ }) => {
                             }}
                             className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 shadow rounded"
                           >
-                            Delete
+                            <BsFillTrash3Fill />
                           </button>
                         </div>
                       </td>
@@ -211,19 +255,24 @@ const UserList = ({ }) => {
                   ))
                   :
                   users.map((user, i) => (
-                    <tr key={i} className="hover:bg-gray-700 focus-within:bg-gray-700 text-center text-md">
-                      <td className="px-4 py-2 whitespace-nowrap">{user.name}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{user.budget}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{user.debt}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{user.comments}</td>
-                      <td className="px-4 py-2 whitespace-nowrap">{user.position}</td>
+                    <tr key={i} className="hover:bg-gray-800 ">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {user.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {user.budget}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {user.debt}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {user.comments}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {user.position}</td>
                       <td className="px-6 py-4 whitespace-no-wrap border-border-gray-200 text-sm leading-5 font-medium">
                         <div className="flex justify-center gap-5">
                           <button
                             onClick={() => handleUpdate(user)}
                             className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 shadow rounded"
                           >
-                            Update
+                            <BsPencilFill />
                           </button>
                           <button
                             onClick={() => {
@@ -232,7 +281,7 @@ const UserList = ({ }) => {
                             }}
                             className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 shadow rounded"
                           >
-                            Delete
+                            <BsFillTrash3Fill />
                           </button>
                         </div>
                       </td>
@@ -241,58 +290,109 @@ const UserList = ({ }) => {
                 }
               </tbody>
             </table>
+
           </div>
         )}
+        <div>
+          <div className=' flex justify-center items-center'>
+            <Pagination
+              postsPerPage={postsPerPage}
+              totalPosts={filtredUsers.length}
+              paginate={handlePageChange}
+              previousPage={previousPage}
+              nextPage={nextPage}
+            />
+          </div>
+        </div>
       </div>
 
       {modal && (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen pt-28 px-4 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity">
-              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+        <div className="bg-black/90 r-300 fixed w-full h-screen  top-0 right-0">
+          <div className={"fixed bg-gray-400 h-screen py-5 w-[35rem] duration-300 " + (modal ? 'right-0 top-0' : '-right-[100%] bottom-0')}>
+
+            <div className='flex justify-between px-4 py-2'>
+              <h2 className='text-2xl text-center font-bold pb-12 container capitalize'>Update Client</h2>
+              <AiOutlineClose onClick={handleClose} size={50} className='cursor-pointer text-red-500 hover:bg-red-300 rounded-full p-1' />
             </div>
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <h4 className="text-2xl capitalize font-extrabold tracking-tight text-gray-900 mb-4">
-                  <input type="text" className='border border-gray-400 p-2 rounded-md w-full' name='name' defaultValue={modalData.name} onChange={(e) => setName(e.target.value)} /></h4>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="font-bold">budget:</p>
-                    <input className='border border-gray-400 p-2 rounded-md w-full' name='bugdet' type='text' defaultValue={modalData.budget} onChange={(e) => setBudget(e.target.value)}></input>
-                  </div>
-                  <div>
-                    <p className="font-bold">debt:</p>
-                    <input className='border border-gray-400 p-2 rounded-md w-full ' name='debt' type='text' defaultValue={modalData.debt} onChange={(e) => setDebt(e.target.value)}></input>
-                  </div>
-                  <div>
-                    <p className="font-bold">comments:</p>
-                    <input className='border border-gray-400 p-2 rounded-md w-full' name='comments' type='text' defaultValue={modalData.comments} onChange={(e) => setComments(e.target.value)}></input>
-                  </div>
-                  <div>
-                    <p className="font-bold">position</p>
-                    <input className='border border-gray-400 p-2 rounded-md w-full' name='position' type='text' defaultValue={modalData.position} onChange={(e) => setPosition(e.target.value)}></input>
-                  </div>
+            <div className="mx-5 grid grid-cols-1 gap-6">
+              <div className="flex flex-col gap-4">
+                <div>
+                <label htmlFor="name" className="block text-lg font-medium mb-2">Client  Name</label>
+
+                  <input
+                    type="text"
+                    name="name"
+                    defaultValue={modalData.name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="border border-gray-300 py-2 px-3 w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="budget" className="block text-lg font-medium mb-2">
+                    Budget:
+                  </label>
+                  <input
+                    type="text"
+                    id="budget"
+                    name="budget"
+                    defaultValue={modalData.budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    className="border border-gray-300 py-2 px-3 w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="debt" className="block text-lg font-medium mb-2">
+                    Debt:
+                  </label>
+                  <input
+                    type="text"
+                    id="debt"
+                    name="debt"
+                    defaultValue={modalData.debt}
+                    onChange={(e) => setDebt(e.target.value)}
+                    className="border border-gray-300 py-2 px-3 w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="comments" className="block text-lg font-medium mb-2">
+                    Comments:
+                  </label>
+                  <input
+                    type="text"
+                    id="comments"
+                    name="comments"
+                    defaultValue={modalData.comments}
+                    onChange={(e) => setComments(e.target.value)}
+                    className="border border-gray-300 py-2 px-3 w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="position" className="block text-lg font-medium mb-2">
+                    Position:
+                  </label>
+                  <input
+                    type="text"
+                    id="position"
+                    name="position"
+                    defaultValue={modalData.position}
+                    onChange={(e) => setPosition(e.target.value)}
+                    className="border border-gray-300 py-2 px-3 w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+                <div className="mt-8 flex justify-center">
+                  <button
+                    type="button"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4"
+                  >
+                    Update
+                  </button>
                 </div>
               </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button
-                  type="button"
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={() => handleSave(selectedUser._id)}
-                >
-                  Update
-                </button>
-                <button
-                  type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={() => handleClose(modalData)}
-                >
-                  Close
-                </button>
-              </div>
             </div>
+
           </div>
         </div>
+
       )}
 
       {nav ? <div className='bg-black/80 fixed w-full h-screen z-10 top-0 left-0' /> : ''}

@@ -9,7 +9,7 @@ const Profit = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4040/api/profits`);
+        const response = await axios.get(`http://localhost:4040/api/profits?year=${year}`);
         setData(response.data);
         setTotalProfit(response.data.reduce((total, item) => total + item.totalProfit, 0));
       } catch (error) {
@@ -20,7 +20,12 @@ const Profit = () => {
   }, [year]);
 
   const handleYearChange = (event) => {
-    setYear(event.target.value);
+    const selectedYear = event.target.value;
+    if (selectedYear > 2023) {
+      setYear('2023');
+    } else {
+      setYear(selectedYear);
+    }
   };
 
   return (
@@ -41,19 +46,19 @@ const Profit = () => {
           ))}
         </select>
       </div>
-      <p className="font-bold">Total profit: {totalProfit}$</p>
-      <table className="table-auto">
-        <thead>
+      <p className="font-bold mb-4">Total profit: ${totalProfit}</p>
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
           <tr>
-            <th className="px-4 py-2">Month</th>
-            <th className="px-4 py-2">Profit</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Month</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white divide-y divide-gray-200">
           {data.map((item, index) => (
             <tr key={index}>
-              <td className="border px-4 py-2">{item.month}</td>
-              <td className="border px-4 py-2">{item.totalProfit}$</td>
+              <td className="px-6 py-4 whitespace-nowrap">{item.month}</td>
+              <td className="px-6 py-4 whitespace-nowrap">${item.totalProfit}</td>
             </tr>
           ))}
         </tbody>

@@ -125,7 +125,6 @@ const Home = () => {
           <div className="flex items-center justify-center min-h-screen text-center sm:block">
             <div className="fixed inset-0 bg-gray-900 opacity-75" />
 
-            {/* Card */}
             <div className="inline-block align-bottom bg-gray-800 border border-gray-700 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <h4 className="text-2xl font-extrabold tracking-wide text-center text-slate-100 mb-4">
@@ -163,7 +162,7 @@ const Home = () => {
                         <p className="font-bold">Quantity</p>
                         <div className="flex">
                           <button className="px-4 bg-blue-500 text-white rounded-l-lg font-bold text-lg hover:bg-blue-200" onClick={handleDecrease}>-</button>
-                          <input className="w-10 text-center border border-blue-500 bg-gray-800 text-white outline-none focus:border-non text-xl" name="comments" type="text" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
+                          <input  className="w-10 text-center border  border-blue-500 bg-gray-800 text-white outline-none focus:border-non text-xl" name="comments" type="text" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
                           <button className="px-4 bg-blue-500 text-white rounded-r-lg font-bold text-lg hover:bg-blue-200" onClick={handleIncrease}>+</button>
                         </div>
                       </div>
@@ -189,7 +188,7 @@ const Home = () => {
                   }
                 </div>
               </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <div className="bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
                   disabled={selectedUser ? false : true}

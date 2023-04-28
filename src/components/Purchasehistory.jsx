@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaSearch } from "react-icons/fa";
+import Pagination from './Pagination';
 
 const PurchaseHistory = () => {
   const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(10);
 
   const loadPurchase = async () => {
     await axios.get('http://localhost:4040/api/purchase')
@@ -14,18 +17,37 @@ const PurchaseHistory = () => {
       .catch(error => {
         console.error(error);
       });
-  }
+  };
 
-  useEffect(() => {
-    loadPurchase();
-  }, []);
-
-  // Filter the purchase history based on the search query
   const filteredPurchaseHistory = purchaseHistory.filter(purchase => {
     const clientName = purchase.user.name.toLowerCase();
     const search = searchQuery.toLowerCase();
     return clientName.includes(search);
   });
+
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = filteredPurchaseHistory.slice(indexOfFirstPost, indexOfLastPost);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const previousPage = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const nextPage = () => {
+    if (currentPage !== Math.ceil(filteredPurchaseHistory.length / postsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  useEffect(() => {
+    loadPurchase();
+  }, []);
 
   return (<>
     <div className='container mx-auto py-4'>
@@ -74,8 +96,8 @@ const PurchaseHistory = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y text-center divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
-            {filteredPurchaseHistory.map((purchase, i) => (
-              <tr key={i}>
+            {currentPosts.map((purchase, i) => (
+              <tr key={i} className='hover:bg-gray-800 '>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                   {purchase.user.name}
                 </td>
@@ -90,10 +112,21 @@ const PurchaseHistory = () => {
                 </td>
               </tr>
             ))}
+
           </tbody>
+
         </table>
 
       </div>
+    </div>
+    <div className=' flex justify-center items-center'>
+      <Pagination
+        postsPerPage={postsPerPage}
+        totalPosts={filteredPurchaseHistory.length}
+        paginate={handlePageChange}
+        previousPage={previousPage}
+        nextPage={nextPage}
+      />
     </div>
   </>
   );
