@@ -96,6 +96,7 @@ const Boxlist = () => {
       })
       .catch(error => {
         console.error(error);
+        toast.error('Error loading data!');
       });
   }
   const handleCloseNav = () => {
@@ -113,6 +114,7 @@ const Boxlist = () => {
       setProducts(productData);
     } catch (error) {
       console.error(error);
+      toast.error('Error loading data!');
     }
   };
   const handleClosemodalDelete = () => {
@@ -132,12 +134,13 @@ const Boxlist = () => {
       await axios.delete(
         `http://localhost:4040/api/boxes/${id}`
       );
-      toast.success('box deleted successfully!');
+      toast.success('Box deleted successfully!');
       setBoxs(boxs.filter(box => box._id !== id));
 
       loadBox();
     } catch (error) {
       console.error('Error deleting data:', error);
+      toast.error('Error loading data!');
     }
   };
   const handleDecreaseBox = () => {
@@ -167,12 +170,15 @@ const Boxlist = () => {
           name,
           productQuantity: productQuantity,
           quantity,
-          productId: modalData._id,
+          productId: modalData.productId,
         }
       ).finally(() => {
         toast.success('Box added successfully!');
         loadBox();
-      }).catch((err) => console.error(err));
+      }).catch((err) => {
+        console.error(err);
+        toast.error('Error loading data!');
+      });
       setModal(false);
       setModalData({});
     } catch (error) {
@@ -283,7 +289,7 @@ const Boxlist = () => {
             <table className="w-full divide-y divide-gray-700">
               <thead className="bg-gray-800">
                 <tr className='text-white'>
-                  <th scope="col" className="tableCol">Name</th>
+                  <th scope="col" className="tableCol">Product Name</th>
                   <th scope="col" className="tableCol">Box Quantity</th>
                   <th scope="col" className="tableCol">Piece Quantity</th>
                   <th scope="col" className="tableCol">Actions</th>
@@ -339,66 +345,61 @@ const Boxlist = () => {
         </div>
 
         <div className="mx-5 grid grid-cols-1 gap-6">
-          <div className="bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <h4 className="text-2xl capitalize font-extrabold tracking-tight text-gray-900 mb-4">
+          <div>
+            <label htmlFor="name" className="block text-lg font-medium mb-2 text-white">Name</label>
+            <input
+              type="text"
+              name="name"
+              autoComplete='off'
+              value={name}
+              disabled
+              onChange={(e) => setName(e.target.value)}
+              className="addLabel cursor-not-allowed bg-gray-700"
+            />
+          </div>
+          <div>
+            <label className="block text-lg text-white font-medium mb-2">Box Quantity</label>
+            <div className="flex flex-row items-center">
+              <button
+                type="button"
+                className="flex justify-center px-4 py-2 items-center bg-green-500 hover:bg-green-600 rounded-l font-bold"
+                onClick={handleDecreaseBox}
+              >
+                -
+              </button>
               <input
-                type="text"
-                className="addLabel"
-                defaultValue={modalData.name}
-                onChange={(e) => setName(e.target.value)}
+                className="items-center w-full align-middle text-center py-2 bg-gray-900 focus:outline-blue-600  text-white"
+                type="number"
+                onChange={Number}
+                value={quantity}
               />
-            </h4>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-lg text-white font-medium mb-2">Box Quantity:</label>
-                <div className="flex flex-row items-center">
-                  <button
-                    type="button"
-                    className="border w-8 h-10 bg-green-500 rounded-lg font-bold text-2xl hover:text-green-200 mx-2 py-1 item-center text-center container"
-                    onClick={handleDecreaseBox}
-                  >
-                    -
-                  </button>
-                  <input
-
-                    className=" text-center text-lg  py-2 px-3 w-20 text-white leading-tight focus:outline-blue-600 focus:ring-blue-600 outline-none bg-gray-700"
-                    type="number"
-                    onChange={Number}
-                    value={quantity}
-                  />
-                  <button
-                    type="button"
-                    className="border w-8 h-10 bg-green-500 rounded-lg font-bold text-2xl hover:text-green-200 mt- mx-2 py-1 item-center text-center container"
-                    onClick={handleIncreaseBox}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div>
-                <label className="block text-lg text-white font-medium mb-2">Piece Quantity:</label>
-                <input
-                  className="addLabel"
-                  type="text"
-                  defaultValue={modalData.productQuantity}
-                  onChange={(e) => setProductQuantity(e.target.value)}
-                />
-              </div>
+              <button
+                type="button"
+                className="flex justify-center px-4 py-2 items-center bg-green-500 hover:bg-green-600 rounded-r font-bold"
+                onClick={handleIncreaseBox}
+              >+
+              </button>
             </div>
           </div>
-          <div className=" px-4 flex justify-center py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <div>
+            <label className="block text-lg text-white font-medium mb-2">Piece Quantity</label>
+            <input
+              className="addLabel"
+              type="text"
+              defaultValue={modalData.productQuantity}
+              onChange={(e) => setProductQuantity(e.target.value)}
+            />
+          </div>
+          <div className="flex justify-end">
             <button
               type="button"
-              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+              className="inline-flex rounded items-center bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4"
               onClick={() => handleSave(selectedBox._id)}
-            >
-              Update Box
+            >Update Box
             </button>
-
           </div>
         </div>
       </div>
-
       {/* Add */}
       <div className={"fixed bg-gray-800 z-10 h-screen py-5 w-[35rem] duration-300 " + (nav ? 'left-0 top-0' : '-left-[100%] bottom-0')}>
         <div className={nav ? "block" : "hidden"}>
@@ -438,7 +439,6 @@ const Boxlist = () => {
           </form>
         </div>
       </div>
-
       {/* Delete */}
       {modalDelete && (
         <div className="fixed z-10 inset-0 overflow-y-auto ">

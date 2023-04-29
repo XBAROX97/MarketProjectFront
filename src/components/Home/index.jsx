@@ -2,6 +2,7 @@ import axios from 'axios';
 import Modal from './modal';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
+import { FaSearch } from "react-icons/fa";
 
 const Home = () => {
 
@@ -12,7 +13,14 @@ const Home = () => {
   const [selectItem, setSelectItem] = useState({});
   const [modalData, setModalData] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
+  
+  const filteredProduct = list.filter(item => {
+    const productName = item.name.toLowerCase();
+    const search = searchTerm.toLowerCase();
+    return productName.includes(search);
+  });
   const fetchProducts = async () => {
     try {
       const response = await axios.get('http://localhost:4040/api/products');
@@ -86,8 +94,26 @@ const Home = () => {
 
   return (
     <>
+         <div className="my-4   gap-4 items-center  flex justify-center">
+        <div className="col-span-6 w-96 lg:col-span-3 ">
+          <div className="relative flex items-center ">
+            <input
+            
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border-2 border-gray-800 transition duration-200 ease-in-out rounded-lg focus:border-blue-500 focus:outline-none bg-gray-800 text-gray-100"
+            />
+            <span className="absolute right-3">
+              <FaSearch className="h-5 w-5 text-gray-400 dark:text-gray-100" />
+            </span>
+          </div>
+        </div>
+      </div>
       <section className="bg-gray-600 w-full h-full grid grid-cols-1 lg:grid-cols-5 p-4 sm:grid-cols-2 md:grid-cols-5 gap-4" >
-        {list.map((item, index) => (
+        
+        {filteredProduct.map((item, index) => (
           <div key={index} className="w-full max-w-sm border rounded-lg shadow hover:shadow-md bg-gray-800 border-gray-700">
             <div>
               <img className="object-contain w-full h-64 rounded-t-lg bg-white" src={item.Image == undefined || item.Image === "" ? "https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg" : item.Image} alt="product image" />

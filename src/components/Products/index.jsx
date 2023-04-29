@@ -9,7 +9,6 @@ import { BsFillTrash3Fill, BsPencilFill } from 'react-icons/bs'
 const ProductList = () => {
   const [modal, setModal] = useState(false);
   const [modalData, setModalData] = useState({});
-  const [selectedProduct, setSelectedProduct] = useState({});
   const [name, setName] = useState('');
   const [image, setImage] = useState('');
   const [price, setPrice] = useState('');
@@ -68,10 +67,8 @@ const ProductList = () => {
   const loadProduct = async () => {
     axios
       .get('http://localhost:4040/api/products')
-
       .then(function (response) {
         setProducts(response.data);
-        console.log(response);
       })
       .catch(function (error) {
         console.error(error);
@@ -81,8 +78,7 @@ const ProductList = () => {
     axios
       .delete(`http://localhost:4040/api/products/${id}`)
       .then((response) => {
-        console.log(response);
-        toast.success('Item deleted successfully!');
+        toast.success('Product deleted successfully!');
         setProducts(products.filter((product) => product._id !== id));
         loadProduct();
       })
@@ -99,7 +95,6 @@ const ProductList = () => {
     setQuantityInPieces(product.quantityInPieces);
     setImage(product.Image);
     setSerialNumber(product.serialNumber);
-    setSelectedProduct(product);
     setModalData(product);
     setModal(true);
   };
@@ -113,11 +108,8 @@ const ProductList = () => {
         category,
         quantityInPieces,
         serialNumber,
-      }).then((res) => console.log(res.data.message));
-      console.log(selectedProduct);
-      loadProduct().then(() =>
-        console.log()
-      );
+      });
+      loadProduct();
       toast.success('Product has been updated successfully!');
       setModal(false);
       setModalData({});
@@ -125,6 +117,7 @@ const ProductList = () => {
       console.error('Error saving data:', error);
     }
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     axios.post('http://localhost:4040/api/products/  ', ({
@@ -137,7 +130,6 @@ const ProductList = () => {
       serialNumber: serialNumber2,
     }))
       .then((response) => {
-        console.log(response);
         setProducts([...products, response.data])
         toast.success('Product has been added successfully!');
         setName2('');
@@ -150,7 +142,7 @@ const ProductList = () => {
         setNav(false);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         toast.error('error check image ');
       });
   };
@@ -175,7 +167,6 @@ const ProductList = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-
   const closeAll = () => {
     setNav(false);
     setModal(false);
@@ -312,17 +303,17 @@ const ProductList = () => {
             <div className="flex flex-col">
               <label htmlFor="image" className="text-lg text-white font-medium mb-2">Image</label>
               <input type="text" id="image" placeholder='Enter image address'
-                className="addLabel" autoComplete='off'  value={image} onChange={(event) => setImage(event.target.value)} />
+                className="addLabel" autoComplete='off' value={image} onChange={(event) => setImage(event.target.value)} />
             </div>
-            <div className="flex flex-col">
+            {/* <div className="flex flex-col">
               <label htmlFor="price" className="text-lg text-white font-medium mb-2">Price</label>
               <input type="number" id="price" placeholder='eneter price'
                 className="addLabel" autoComplete='off' value={price} onChange={(event) => setPrice(event.target.value)} />
-            </div>
+            </div> */}
             <div className="flex flex-col">
               <label htmlFor="retailPrice" className="text-lg text-white font-medium mb-2">Retail Price</label>
               <input type="number" autoComplete='off' id="retailPrice " placeholder='Enter retail price'
-                className="addLabel"  value={retailPrice}  onChange={(event) => setRetailPrice(event.target.value)} />
+                className="addLabel" value={retailPrice} onChange={(event) => setRetailPrice(event.target.value)} />
             </div>
             <div className="flex flex-col">
               <label htmlFor="category" className="text-lg text-white font-medium mb-2">Category</label>
@@ -331,7 +322,7 @@ const ProductList = () => {
           </div>
           <div className="flex justify-end">
             <button
-            onClick={handleSave}
+              onClick={handleSave}
               type="submit"
               className="inline-flex rounded items-center bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4"
             >
@@ -357,10 +348,6 @@ const ProductList = () => {
               <div className="flex flex-col">
                 <label htmlFor="image" className="text-lg text-white font-medium mb-2">Image address</label>
                 <input type="text" autoComplete='off' id="image" placeholder='Image' className="addLabel" value={image2} onChange={(event) => setImage2(event.target.value)} />
-              </div>
-              <div className="flex flex-col">
-                <label htmlFor="price" className="text-lg text-white font-medium mb-2">Price</label>
-                <input type="number" autoComplete='off' id="price" placeholder='Price' className="addLabel" value={price2} onChange={(event) => setPrice2(event.target.value)} />
               </div>
               <div className="flex flex-col">
                 <label htmlFor="retailPrice" className="text-lg text-white font-medium mb-2">Retail Price</label>
@@ -390,31 +377,31 @@ const ProductList = () => {
 
       {/* Delete Modal */}
       {modalDelete && (
-        <div class="fixed z-10 inset-0 overflow-y-auto ">
-          <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center  sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-              <div class="absolute inset-0 bg-gray-700 opacity-75"></div>
+        <div className="fixed z-10 inset-0 overflow-y-auto ">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center  sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-700 opacity-75"></div>
             </div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-gray-800 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-              <div class="sm:flex sm:items-start">
-                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-400 sm:mx-0 sm:h-10 sm:w-10">
-                  <svg class="h-6 w-6 text-red-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div className="inline-block align-bottom bg-gray-800 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+              <div className="sm:flex sm:items-start">
+                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-400 sm:mx-0 sm:h-10 sm:w-10">
+                  <svg className="h-6 w-6 text-red-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </div>
-                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <h3 class="text-lg leading-6 font-medium text-white">Delete item?</h3>
-                  <div class="mt-2">
-                    <p class="text-sm text-gray-400">Are you sure you want to delete this item? This action cannot be undone.</p>
+                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                  <h3 className="text-lg leading-6 font-medium text-white">Delete item?</h3>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-400">Are you sure you want to delete this item? This action cannot be undone.</p>
                   </div>
                 </div>
               </div>
-              <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                <button onClick={handleConfirm} type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                <button onClick={handleConfirm} type="button" className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
                   Delete
                 </button>
-                <button onClick={handleClosemodalDelete} type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-500 shadow-sm px-4 py-2 bg-gray-700 text-base font-medium text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                <button onClick={handleClosemodalDelete} type="button" className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-500 shadow-sm px-4 py-2 bg-gray-700 text-base font-medium text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                   Cancel
                 </button>
               </div>

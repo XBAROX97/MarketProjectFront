@@ -33,6 +33,7 @@ const UserList = ({ }) => {
       setUsers(response.data);
     } catch (error) {
       console.error(error);
+      toast.error('Error loading data!');
     }
   }
   useEffect(() => {

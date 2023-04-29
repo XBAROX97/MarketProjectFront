@@ -73,6 +73,9 @@ const LeaderBoard = () => {
                   Client Name
                 </th>
                 <th scope="col" className="px-6 py-3 text-center font-medium tracking-wider">
+                position
+                </th>
+                <th scope="col" className="px-6 py-3 text-center font-medium tracking-wider">
                   Score
                 </th>
                 <th scope="col" className="px-6 py-3 text-center font-medium tracking-wider">
@@ -95,6 +98,9 @@ const LeaderBoard = () => {
                         </div>
                       </div>
                     </div>
+                  </td>
+                    <td className="text-sm font-medium text-gray-900 dark:text-gray-200">
+                  {leader.position}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${leader.points > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
