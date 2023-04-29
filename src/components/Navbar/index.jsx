@@ -18,11 +18,11 @@ const Header = () => {
     },
     {
       name: "Boxes",
-      link: '/addbox',
+      link: '/boxes',
     },
     {
       name: "History",
-      link: '/purchasehistory',
+      link: '/history',
     }, {
       name: "Profit",
       link: '/profit',

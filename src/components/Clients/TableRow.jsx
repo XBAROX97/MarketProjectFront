@@ -9,7 +9,7 @@ const TableRow = ({ _id, name, budget, debt, comments, position, handleUpdate, s
             ${budget}
         </td>
         <td className="tableRow text-red-500">
-            ${debt.toFixed(2)}
+            ${debt}
         </td>
         <td className="tableRow text-white">
             {position}

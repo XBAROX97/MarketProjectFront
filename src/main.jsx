@@ -11,6 +11,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <div className='bg-gray-600 min-h-screen'>
       <RouterProvider router={router} />
     </div>
-    <ToastContainer />
+    <ToastContainer position='bottom-right' />
   </React.StrictMode>
 )

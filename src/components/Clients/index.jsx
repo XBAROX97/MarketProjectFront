@@ -227,7 +227,7 @@ const UserList = ({ }) => {
                     key={_id}
                     _id={_id}
                     name={name}
-                    budget={budget.toFixed(2)}
+                    budget={budget}
                     debt={debt}
                     comments={comments}
                     position={position}

@@ -5,13 +5,12 @@ import './index.css';
 import App from "./App";
 import Home from "./components/Home";
 import Profit from "./components/Profit";
-import AddBox from "./components/AddBox";
 import Clients from "./components/Clients";
 import ErrorPages from "./components/ErrorPages";
 import Products from "./components/Products";
 import LeaderBoard from "./components/LeaderBoard";
 import Purchasehistory from "./components/Purchasehistory";
-
+import Boxes from "./components/Box";
 
 export const router = createBrowserRouter([
   {
@@ -35,12 +34,12 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPages />,
       },
       {
-        path: "/addbox",
-        element: <AddBox />,
+        path: "/boxes",
+        element: <Boxes />,
         errorElement: <ErrorPages />,
       },
       {
-        path: "/purchasehistory",
+        path: "/history",
         element: <Purchasehistory />,
         errorElement: <ErrorPages />,
       }, {

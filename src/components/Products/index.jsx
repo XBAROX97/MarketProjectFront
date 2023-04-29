@@ -97,7 +97,7 @@ const ProductList = () => {
     setRetailPrice(product.retailPrice);
     setCategory(product.category);
     setQuantityInPieces(product.quantityInPieces);
-    setImage(product.image);
+    setImage(product.Image);
     setSerialNumber(product.serialNumber);
     setSelectedProduct(product);
     setModalData(product);
@@ -307,30 +307,31 @@ const ProductList = () => {
             <div>
               <label htmlFor="name" className="block text-lg text-white font-medium mb-2">Name</label>
               <input type="text" placeholder='product Name' id="name"
-                className="addLabel" value={name} onChange={(event) => setName(event.target.value)} />
+                className="addLabel" autoComplete='off' value={name} onChange={(event) => setName(event.target.value)} />
             </div>
             <div className="flex flex-col">
               <label htmlFor="image" className="text-lg text-white font-medium mb-2">Image</label>
               <input type="text" id="image" placeholder='Enter image address'
-                className="addLabel" value={image} onChange={(event) => setImage(event.target.value)} />
+                className="addLabel" autoComplete='off'  value={image} onChange={(event) => setImage(event.target.value)} />
             </div>
             <div className="flex flex-col">
               <label htmlFor="price" className="text-lg text-white font-medium mb-2">Price</label>
               <input type="number" id="price" placeholder='eneter price'
-                className="addLabel" value={price} onChange={(event) => setPrice(event.target.value)} />
+                className="addLabel" autoComplete='off' value={price} onChange={(event) => setPrice(event.target.value)} />
             </div>
             <div className="flex flex-col">
               <label htmlFor="retailPrice" className="text-lg text-white font-medium mb-2">Retail Price</label>
-              <input type="number" id="retailPrice " placeholder='Enter retail price'
-                className="addLabel" value={retailPrice} onChange={(event) => setRetailPrice(event.target.value)} />
+              <input type="number" autoComplete='off' id="retailPrice " placeholder='Enter retail price'
+                className="addLabel"  value={retailPrice}  onChange={(event) => setRetailPrice(event.target.value)} />
             </div>
             <div className="flex flex-col">
               <label htmlFor="category" className="text-lg text-white font-medium mb-2">Category</label>
-              <input type="text" id="category " placeholder='Enter category' className="addLabel" value={category} onChange={(event) => setCategory(event.target.value)} />
+              <input type="text" id="category " autoComplete='off' placeholder='Enter category' className="addLabel" value={category} onChange={(event) => setCategory(event.target.value)} />
             </div>
           </div>
           <div className="flex justify-end">
             <button
+            onClick={handleSave}
               type="submit"
               className="inline-flex rounded items-center bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4"
             >
@@ -351,28 +352,28 @@ const ProductList = () => {
             <div className="flex flex-col gap-4">
               <div>
                 <label htmlFor="name" className="block text-white text-lg font-medium mb-2">Product Name</label>
-                <input type="text" placeholder="Name" id="name" className="addLabel" value={name2} onChange={(event) => setName2(event.target.value)} />
+                <input type="text" autoComplete='off' placeholder="Name" id="name" className="addLabel" value={name2} onChange={(event) => setName2(event.target.value)} />
               </div>
               <div className="flex flex-col">
                 <label htmlFor="image" className="text-lg text-white font-medium mb-2">Image address</label>
-                <input type="text" id="image" placeholder='Image' className="addLabel" value={image2} onChange={(event) => setImage2(event.target.value)} />
+                <input type="text" autoComplete='off' id="image" placeholder='Image' className="addLabel" value={image2} onChange={(event) => setImage2(event.target.value)} />
               </div>
               <div className="flex flex-col">
                 <label htmlFor="price" className="text-lg text-white font-medium mb-2">Price</label>
-                <input type="number" id="price" placeholder='Price' className="addLabel" value={price2} onChange={(event) => setPrice2(event.target.value)} />
+                <input type="number" autoComplete='off' id="price" placeholder='Price' className="addLabel" value={price2} onChange={(event) => setPrice2(event.target.value)} />
               </div>
               <div className="flex flex-col">
                 <label htmlFor="retailPrice" className="text-lg text-white font-medium mb-2">Retail Price</label>
-                <input type="number" id="retailPrice " placeholder='Retail Price' className="addLabel" value={retailPrice2} onChange={(event) => setRetailPrice2(event.target.value)} />
+                <input type="number" autoComplete='off' id="retailPrice " placeholder='Retail Price' className="addLabel" value={retailPrice2} onChange={(event) => setRetailPrice2(event.target.value)} />
               </div>
               <div className="flex flex-col">
                 <label htmlFor="category" className="text-lg text-white font-medium mb-2">Category</label>
-                <input type="text" id="category " placeholder='Category' className="addLabel" value={category2} onChange={(event) => setCategory2(event.target.value)} />
+                <input type="text" autoComplete='off' id="category " placeholder='Category' className="addLabel" value={category2} onChange={(event) => setCategory2(event.target.value)} />
               </div>
 
               <div className="flex flex-col">
                 <label htmlFor="serialNumber" className="text-lg text-white font-medium mb-2">Serial Number</label>
-                <input type="number" id="serialNumber" placeholder='Serial number' className="addLabel" value={serialNumber2} onChange={(event) => setSerialNumber2(event.target.value)} />
+                <input type="number" autoComplete='off' id="serialNumber" placeholder='Serial number' className="addLabel" value={serialNumber2} onChange={(event) => setSerialNumber2(event.target.value)} />
               </div>
             </div>
             <div className="flex justify-start">
