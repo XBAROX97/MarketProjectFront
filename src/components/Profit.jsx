@@ -47,7 +47,7 @@ const Profit = () => {
           ))}
         </select>
       </div>
-      <p className="font-bold mb-4">Total profit: ${totalProfit}</p>
+      <p className="font-bold mb-4">Total profit: ${totalProfit.toFixed(2)}</p>
       <table className="min-w-full divide-y divide-gray-800">
         <thead className="bg-gray-800">
           <tr>
@@ -59,7 +59,7 @@ const Profit = () => {
           {data.map((item, index) => (
             <tr key={index}>
               <td className="px-6 py-4 whitespace-nowrap">{item.month}</td>
-              <td className="px-6 py-4 whitespace-nowrap">${item.totalProfit}</td>
+              <td className="px-6 py-4 whitespace-nowrap">${item.totalProfit.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>

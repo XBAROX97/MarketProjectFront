@@ -47,7 +47,7 @@ const PurchaseHistory = () => {
       cost += purchase.totalCost;
     });
     setTotalCost(cost);
-  }, []);
+  }, [filteredPurchaseHistory]);
   return (<>
     <div className='container mx-auto py-4'>
       <h1 className="text-4xl font-bold text-center text-slate-100 font-mono uppercase">History</h1>
@@ -103,7 +103,7 @@ const PurchaseHistory = () => {
           {purchase.product.name} </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
           {purchase.quantity} </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600 dark:text-green-400">
+          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600 dark:text-green-400">
           ${purchase.totalCost.toFixed(2)} </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
           <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -121,8 +121,13 @@ const PurchaseHistory = () => {
 </table>
 
       </div>
-      <div><p className="text-xl font-medium text-green-600 dark:text-green-400">Total cost for {searchTerm}: ${totalCost.toFixed(2)}</p>
-      </div>
+      <div>
+  <p className="text-xl  font-medium rounded-lg bg-gray-800 text-white px-2 py-1 flex justify-center">
+    Total cost: 
+    <span className='text-green-500 ml-1'>$ {totalCost.toFixed(2)}</span>
+  </p>
+</div>
+
     </div>
 
     <div className=' flex justify-center items-center'>
