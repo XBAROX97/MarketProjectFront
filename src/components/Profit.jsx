@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
 const Profit = () => {
   const [year, setYear] = useState('2023');
   const [data, setData] = useState([]);

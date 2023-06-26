@@ -1,5 +1,4 @@
 import { BsFillTrash3Fill, BsPencilFill } from 'react-icons/bs'
-
 const TableRow = ({ _id, name, budget, debt, comments, position, handleUpdate, setModalDelete, setDataDelete }) => (
     <tr key={_id} className="hover:bg-gray-800 ">
         <td className="tableRow capitalize text-white">

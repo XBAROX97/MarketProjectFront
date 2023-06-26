@@ -8,7 +8,6 @@ const LeaderBoard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(10);
-
   const loadLeaderBoardData = async () => {
     try {
       const response = await axios.get('http://localhost:4040/api/leaderBoard');

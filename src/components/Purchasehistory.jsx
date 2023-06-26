@@ -7,7 +7,6 @@ const PurchaseHistory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(10);
-
   const [totalCost, setTotalCost] = useState(0);
 
   const loadPurchase = async () => {

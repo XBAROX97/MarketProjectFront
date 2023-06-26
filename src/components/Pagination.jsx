@@ -9,7 +9,6 @@ const Paginate = ({ postsPerPage, totalPosts, currentPage, paginate, previousPag
   for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
     pageNumbers.push(i);
   }
-
   return (
     <div className="flex justify-center max-w-[600px] mx-auto my-2">
       <button

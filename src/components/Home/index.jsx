@@ -14,7 +14,6 @@ const Home = () => {
   const [modalData, setModalData] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-
   
   const filteredProduct = list.filter(item => {
     const productName = item.name.toLowerCase();

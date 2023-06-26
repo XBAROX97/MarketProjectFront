@@ -15,7 +15,6 @@ function ProductSelector({ products, setSelectedProducts }) {
     label: product.name,
     value: product,
   }));
-
   const handleProductChange = (selectedOption) => {
     setSelectedProduct(selectedOption?.value || null);
     setSelectedProducts(selectedOption?.value || null);
@@ -67,7 +66,6 @@ function ProductSelector({ products, setSelectedProducts }) {
     </div>
   );
 }
-
 const Boxlist = () => {
   const [boxs, setBoxs] = useState([]);
   const [products, setProducts] = useState([]);

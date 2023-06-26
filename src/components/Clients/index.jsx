@@ -5,7 +5,6 @@ import Pagination from "../Pagination";
 import { FaSearch } from 'react-icons/fa';
 import { AiOutlineClose } from "react-icons/ai";
 import React, { useEffect, useState } from 'react';
-
 const UserList = ({ }) => {
   const [modal, setModal] = useState(false);
   const [_id, set_id] = useState(null);

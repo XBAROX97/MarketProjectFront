@@ -11,7 +11,6 @@ import Products from "./components/Products";
 import LeaderBoard from "./components/LeaderBoard";
 import Purchasehistory from "./components/Purchasehistory";
 import Boxes from "./components/Box";
-
 export const router = createBrowserRouter([
   {
     path: "/",

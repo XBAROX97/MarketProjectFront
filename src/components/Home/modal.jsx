@@ -11,7 +11,6 @@ const Modal = ({ modal, setQuantity, selectItem, selectedUser, setSelectedUser, 
             setQuantity(selectItem.quantityInPieces);
         }
     };
-
     if (modal)
         return (
             <div className="fixed z-10 inset-0 overflow-y-auto">
